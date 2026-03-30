@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Examen Geografía Física</title>
+
+<style>
+body {font-family: Arial; background:#e8f5e9; padding:20px;}
+.container {background:white; padding:20px; border-radius:10px; max-width:900px; margin:auto;}
+.timer {color:red; font-size:20px; float:right;}
+button {background:#4caf50; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;}
+.correcta {color:green; font-weight:bold;}
+.incorrecta {color:red; font-weight:bold;}
+.real {color:orange; font-weight:bold;}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="inicio">
+<h2>Inicio del Examen</h2>
+<input type="text" id="nombre" placeholder="Nombre completo"><br><br>
+<input type="text" id="cuenta" placeholder="Número de cuenta"><br><br>
+<button onclick="iniciar()">Comenzar</button>
+</div>
+
+<div class="container" id="quizContainer" style="display:none;">
+<div class="timer" id="timer">01:05</div>
+<div id="quiz"></div>
+<button onclick="nextQuestion()">Siguiente</button>
+</div>
+
+<div class="container" id="resultado" style="display:none;"></div>
+
+<script>
+
+// ====== GENERADOR DE 50 PREGUNTAS ======
+const base = [
+["¿Qué estudia la tectónica global?","Movimientos de placas","Clima","Ríos","Vegetación",0],
+["¿Qué capa es la más interna de la Tierra?","Corteza","Manto","Núcleo","Litosfera",2],
+["¿Quién propuso la deriva continental?","Newton","Wegener","Darwin","Einstein",1],
+["¿Qué provoca los sismos?","Viento","Movimiento de placas","Lluvia","Sol",1],
+["¿Qué mide la escala Richter?","Temperatura","Magnitud sísmica","Altura","Presión",1],
+["¿Dónde hay mayor actividad volcánica?","Desiertos","Cinturón de fuego","Polos","Selvas",1],
+["¿Qué es una llanura?","Elevación","Zona plana","Montaña","Valle",1],
+["¿Qué es una meseta?","Zona baja","Superficie elevada plana","Volcán","Océano",1],
+["¿Qué es una montaña?","Depresión","Elevación natural","Río","Lago",1],
+["¿Qué relaciona el relieve con población?","Clima","Economía","Ubicación humana","Vegetación",2]
+];
+
+// duplicar hasta 50 preguntas
+let questions = [];
+for(let i=0;i<5;i++){
+    base.forEach((q,index)=>{
+        questions.push({
+            q: q[0]+" ("+(i+1)+")",
+            a: [q[1],q[2],q[3],q[4]],
+            correct: q[5]
+        });
+    });
+}
+
+// ===== VARIABLES =====
+let current=0, timer, timeLeft=65;
+let respuestas=new Array(questions.length).fill(null);
+let tiempos=new Array(questions.length).fill(0);
+let inicioExamen, inicioPregunta;
+
+// ===== INICIO =====
+function iniciar(){
+if(!nombre.value || !cuenta.value){alert("Completa los datos");return;}
+inicioExamen=new Date();
+inicio.style.display="none";
+quizContainer.style.display="block";
+loadQuestion();
+}
+
+// ===== CARGAR =====
+function loadQuestion(){
+inicioPregunta=Date.now();
+quiz.innerHTML=`
+<p><b>${current+1}. ${questions[current].q}</b></p>
+${questions[current].a.map((opt,i)=>`
+<label><input type="radio" name="q" value="${i}"> ${"ABCD"[i]}) ${opt}</label><br>
+`).join("")}`;
+resetTimer();
+}
+
+// ===== TIMER =====
+function resetTimer(){
+clearInterval(timer);
+timeLeft=65;
+timer=setInterval(()=>{
+timer.textContent="";
+document.getElementById("timer").textContent=
+`${Math.floor(timeLeft/60)}:${(timeLeft%60).toString().padStart(2,"0")}`;
+timeLeft--;
+if(timeLeft<0){guardar();nextQuestion();}
+},1000);
+}
+
+// ===== GUARDAR =====
+function guardar(){
+let sel=document.querySelector('input[name="q"]:checked');
+respuestas[current]=sel?parseInt(sel.value):null;
+tiempos[current]=Math.floor((Date.now()-inicioPregunta)/1000);
+}
+
+// ===== SIGUIENTE =====
+function nextQuestion(){
+guardar();
+clearInterval(timer);
+current++;
+if(current<questions.length){loadQuestion();}
+else finalizar();
+}
+
+// ===== FINAL =====
+function finalizar(){
+let total=Math.floor((new Date()-inicioExamen)/1000);
+let correctas=0;
+let letras=["A","B","C","D"];
+let textoDescarga="";
+
+let html=`<h2>Resultados</h2>
+<p><b>Nombre:</b> ${nombre.value}</p>
+<p><b>Cuenta:</b> ${cuenta.value}</p>
+<p><b>Tiempo total:</b> ${total}s</p>`;
+
+questions.forEach((q,i)=>{
+let r=respuestas[i];
+let c=q.correct;
+
+let estado="";
+if(r===c){
+correctas++;
+estado=`<span class="correcta">✔ Correcta (${letras[c]})</span>`;
+}else{
+estado=`<span class="incorrecta">✘ Incorrecta (${r!==null?letras[r]:"Sin responder"})</span>
+<br><span class="real">Correcta: ${letras[c]}</span>`;
+}
+
+// TEXTO SIN RESPUESTA CORRECTA
+textoDescarga+=`${i+1}. Respuesta: ${r!==null?letras[r]:"Sin responder"} | Tiempo: ${tiempos[i]}s\n`;
+
+html+=`<p><b>${i+1}. ${q.q}</b><br>${estado}<br>Tiempo: ${tiempos[i]}s</p><hr>`;
+});
+
+let cal=(correctas/questions.length*10).toFixed(2);
+
+html+=`<h3>Calificación: ${cal}</h3>
+<button onclick="descargar()">Descargar</button>`;
+
+resultado.innerHTML=html;
+resultado.style.display="block";
+
+window.reporte=`
+Nombre: ${nombre.value}
+Cuenta: ${cuenta.value}
+Tiempo total: ${total}s
+Calificación: ${cal}
+
+Resultados:
+${textoDescarga}
+`;
+}
+
+// ===== DESCARGAR =====
+function descargar(){
+let blob=new Blob([window.reporte],{type:"text/plain"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="resultado_examen.txt";
+a.click();
+}
+
+</script>
+
+</body>
+</html>
