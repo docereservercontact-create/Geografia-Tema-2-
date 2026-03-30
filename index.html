@@ -11,7 +11,6 @@ body {font-family: Arial; background:#e8f5e9; padding:20px;}
 button {background:#4caf50; color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;}
 .correcta {color:green; font-weight:bold;}
 .incorrecta {color:red; font-weight:bold;}
-.real {color:orange; font-weight:bold;}
 </style>
 </head>
 
@@ -34,7 +33,7 @@ button {background:#4caf50; color:white; padding:10px; border:none; border-radiu
 
 <script>
 
-// ====== GENERADOR DE 50 PREGUNTAS ======
+// ===== BASE DE PREGUNTAS =====
 const base = [
 ["¿Qué estudia la tectónica global?","Movimientos de placas","Clima","Ríos","Vegetación",0],
 ["¿Qué capa es la más interna de la Tierra?","Corteza","Manto","Núcleo","Litosfera",2],
@@ -48,27 +47,23 @@ const base = [
 ["¿Qué relaciona el relieve con población?","Clima","Economía","Ubicación humana","Vegetación",2]
 ];
 
-// duplicar hasta 50 preguntas
-let questions = [];
+// GENERAR 50
+let questions=[];
 for(let i=0;i<5;i++){
-    base.forEach((q,index)=>{
-        questions.push({
-            q: q[0]+" ("+(i+1)+")",
-            a: [q[1],q[2],q[3],q[4]],
-            correct: q[5]
-        });
-    });
+base.forEach(q=>{
+questions.push({q:q[0]+" ("+(i+1)+")",a:[q[1],q[2],q[3],q[4]],correct:q[5]});
+});
 }
 
 // ===== VARIABLES =====
-let current=0, timer, timeLeft=65;
+let current=0,timeLeft=65,timer;
 let respuestas=new Array(questions.length).fill(null);
 let tiempos=new Array(questions.length).fill(0);
-let inicioExamen, inicioPregunta;
+let inicioExamen,inicioPregunta;
 
-// ===== INICIO =====
+// ===== INICIAR =====
 function iniciar(){
-if(!nombre.value || !cuenta.value){alert("Completa los datos");return;}
+if(!nombre.value||!cuenta.value){alert("Completa los datos");return;}
 inicioExamen=new Date();
 inicio.style.display="none";
 quizContainer.style.display="block";
@@ -91,7 +86,6 @@ function resetTimer(){
 clearInterval(timer);
 timeLeft=65;
 timer=setInterval(()=>{
-timer.textContent="";
 document.getElementById("timer").textContent=
 `${Math.floor(timeLeft/60)}:${(timeLeft%60).toString().padStart(2,"0")}`;
 timeLeft--;
@@ -120,27 +114,26 @@ function finalizar(){
 let total=Math.floor((new Date()-inicioExamen)/1000);
 let correctas=0;
 let letras=["A","B","C","D"];
-let textoDescarga="";
 
 let html=`<h2>Resultados</h2>
 <p><b>Nombre:</b> ${nombre.value}</p>
 <p><b>Cuenta:</b> ${cuenta.value}</p>
 <p><b>Tiempo total:</b> ${total}s</p>`;
 
+let textoDescarga="";
+
 questions.forEach((q,i)=>{
 let r=respuestas[i];
-let c=q.correct;
-
 let estado="";
-if(r===c){
+
+if(r===q.correct){
 correctas++;
-estado=`<span class="correcta">✔ Correcta (${letras[c]})</span>`;
+estado=`<span class="correcta">✔ Correcta</span>`;
 }else{
-estado=`<span class="incorrecta">✘ Incorrecta (${r!==null?letras[r]:"Sin responder"})</span>
-<br><span class="real">Correcta: ${letras[c]}</span>`;
+estado=`<span class="incorrecta">✘ Incorrecta</span>`;
 }
 
-// TEXTO SIN RESPUESTA CORRECTA
+// TEXTO SIN RESPUESTAS CORRECTAS
 textoDescarga+=`${i+1}. Respuesta: ${r!==null?letras[r]:"Sin responder"} | Tiempo: ${tiempos[i]}s\n`;
 
 html+=`<p><b>${i+1}. ${q.q}</b><br>${estado}<br>Tiempo: ${tiempos[i]}s</p><hr>`;
@@ -149,11 +142,12 @@ html+=`<p><b>${i+1}. ${q.q}</b><br>${estado}<br>Tiempo: ${tiempos[i]}s</p><hr>`;
 let cal=(correctas/questions.length*10).toFixed(2);
 
 html+=`<h3>Calificación: ${cal}</h3>
-<button onclick="descargar()">Descargar</button>`;
+<button onclick="descargar()">Descargar resultados</button>`;
 
 resultado.innerHTML=html;
 resultado.style.display="block";
 
+// REPORTE SIN RESPUESTAS CORRECTAS
 window.reporte=`
 Nombre: ${nombre.value}
 Cuenta: ${cuenta.value}
