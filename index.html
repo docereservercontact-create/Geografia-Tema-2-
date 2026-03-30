@@ -33,35 +33,71 @@ button {background:#4caf50; color:white; padding:10px; border:none; border-radiu
 
 <script>
 
-// ===== BASE DE PREGUNTAS =====
-const base = [
-["¿Qué estudia la tectónica global?","Movimientos de placas","Clima","Ríos","Vegetación",0],
-["¿Qué capa es la más interna de la Tierra?","Corteza","Manto","Núcleo","Litosfera",2],
-["¿Quién propuso la deriva continental?","Newton","Wegener","Darwin","Einstein",1],
-["¿Qué provoca los sismos?","Viento","Movimiento de placas","Lluvia","Sol",1],
-["¿Qué mide la escala Richter?","Temperatura","Magnitud sísmica","Altura","Presión",1],
-["¿Dónde hay mayor actividad volcánica?","Desiertos","Cinturón de fuego","Polos","Selvas",1],
-["¿Qué es una llanura?","Elevación","Zona plana","Montaña","Valle",1],
-["¿Qué es una meseta?","Zona baja","Superficie elevada plana","Volcán","Océano",1],
-["¿Qué es una montaña?","Depresión","Elevación natural","Río","Lago",1],
-["¿Qué relaciona el relieve con población?","Clima","Economía","Ubicación humana","Vegetación",2]
+// ===== 50 PREGUNTAS DIFERENTES =====
+const questions = [
+{q:"¿Qué estudia la tectónica de placas?",a:["Clima","Movimiento de placas","Ríos","Vegetación"],correct:1},
+{q:"¿Cuál es la capa más externa de la Tierra?",a:["Núcleo","Manto","Corteza","Astenosfera"],correct:2},
+{q:"¿Qué científico propuso la deriva continental?",a:["Darwin","Wegener","Newton","Galileo"],correct:1},
+{q:"¿Qué fenómeno produce los terremotos?",a:["Lluvia","Viento","Movimiento de placas","Sol"],correct:2},
+{q:"¿Qué mide la escala Richter?",a:["Temperatura","Magnitud sísmica","Presión","Altitud"],correct:1},
+{q:"¿Dónde se localiza el cinturón de fuego?",a:["Atlántico","Pacífico","Ártico","Índico"],correct:1},
+{q:"¿Qué es una falla geológica?",a:["Río","Fractura terrestre","Montaña","Valle"],correct:1},
+{q:"¿Qué capa terrestre es líquida?",a:["Corteza","Núcleo externo","Manto","Litosfera"],correct:1},
+{q:"¿Qué tipo de roca se forma por magma?",a:["Sedimentaria","Ígnea","Metamórfica","Fósil"],correct:1},
+{q:"¿Qué es una llanura?",a:["Elevación","Zona plana","Volcán","Océano"],correct:1},
+
+{q:"¿Qué es una meseta?",a:["Zona baja","Superficie elevada plana","Montaña","Río"],correct:1},
+{q:"¿Qué es un valle?",a:["Elevación","Depresión entre montañas","Volcán","Océano"],correct:1},
+{q:"¿Qué es un volcán?",a:["Río","Abertura terrestre","Montaña","Valle"],correct:1},
+{q:"¿Qué libera un volcán?",a:["Agua","Lava","Viento","Arena"],correct:1},
+{q:"¿Qué causa los tsunamis?",a:["Viento","Sismos submarinos","Sol","Lluvia"],correct:1},
+{q:"¿Qué es erosión?",a:["Formación","Desgaste","Elevación","Movimiento"],correct:1},
+{q:"¿Qué es sedimentación?",a:["Desgaste","Depósito","Movimiento","Calor"],correct:1},
+{q:"¿Qué forma el relieve?",a:["Clima","Procesos internos y externos","Vegetación","Animales"],correct:1},
+{q:"¿Qué es el manto?",a:["Capa externa","Capa intermedia","Capa interna","Agua"],correct:1},
+{q:"¿Qué es el núcleo?",a:["Centro terrestre","Superficie","Océano","Aire"],correct:0},
+
+{q:"¿Qué es un sismo?",a:["Movimiento terrestre","Viento","Lluvia","Calor"],correct:0},
+{q:"¿Qué es magnitud?",a:["Intensidad","Tamaño del sismo","Tiempo","Altura"],correct:1},
+{q:"¿Qué es epicentro?",a:["Centro interno","Punto superficial","Montaña","Río"],correct:1},
+{q:"¿Qué es hipocentro?",a:["Interior sismo","Superficie","Aire","Agua"],correct:0},
+{q:"¿Qué país tiene alta sismicidad?",a:["México","Canadá","Brasil","Egipto"],correct:0},
+{q:"¿Qué es relieve?",a:["Clima","Formas del terreno","Ríos","Aire"],correct:1},
+{q:"¿Qué es altitud?",a:["Distancia mar","Tiempo","Clima","Peso"],correct:0},
+{q:"¿Qué es latitud?",a:["Distancia ecuador","Altura","Tiempo","Presión"],correct:0},
+{q:"¿Qué es longitud?",a:["Distancia Greenwich","Altura","Peso","Clima"],correct:0},
+{q:"¿Qué es una cordillera?",a:["Montañas","Ríos","Valles","Mares"],correct:0},
+
+{q:"¿Qué es una depresión?",a:["Elevación","Zona baja","Montaña","Río"],correct:1},
+{q:"¿Qué es minería?",a:["Extracción recursos","Agricultura","Pesca","Industria"],correct:0},
+{q:"¿Qué mineral es energético?",a:["Oro","Carbón","Plata","Cobre"],correct:1},
+{q:"¿Qué mineral es precioso?",a:["Hierro","Oro","Carbón","Sal"],correct:1},
+{q:"¿Qué mineral es industrial?",a:["Cobre","Agua","Aire","Sol"],correct:0},
+{q:"¿Qué afecta el relieve a población?",a:["Nada","Distribución","Color","Clima"],correct:1},
+{q:"¿Qué es una placa tectónica?",a:["Fragmento terrestre","Río","Aire","Agua"],correct:0},
+{q:"¿Qué produce el movimiento divergente?",a:["Separación","Choque","Nada","Fusión"],correct:0},
+{q:"¿Qué produce el movimiento convergente?",a:["Separación","Choque","Nada","Desgaste"],correct:1},
+{q:"¿Qué produce el movimiento transformante?",a:["Deslizamiento","Choque","Separación","Nada"],correct:0},
+
+{q:"¿Qué es magma?",a:["Roca fundida","Agua","Aire","Tierra"],correct:0},
+{q:"¿Qué es lava?",a:["Magma exterior","Agua","Aire","Gas"],correct:0},
+{q:"¿Qué es riesgo volcánico?",a:["Peligro volcán","Agua","Viento","Sol"],correct:0},
+{q:"¿Qué es riesgo sísmico?",a:["Peligro sismo","Clima","Altura","Agua"],correct:0},
+{q:"¿Qué zona es más sísmica en México?",a:["Centro","Pacífico","Norte","Este"],correct:1},
+{q:"¿Qué continente tiene más volcanes?",a:["Asia","Oceanía","América","Europa"],correct:2},
+{q:"¿Qué es la litosfera?",a:["Capa sólida","Aire","Agua","Fuego"],correct:0},
+{q:"¿Qué es la astenosfera?",a:["Capa plástica","Sólida","Líquida","Gas"],correct:0},
+{q:"¿Qué influye en economía?",a:["Relieve","Color","Forma","Tiempo"],correct:0},
+{q:"¿Qué influye en población?",a:["Relieve","Nada","Color","Forma"],correct:0}
 ];
 
-// GENERAR 50
-let questions=[];
-for(let i=0;i<5;i++){
-base.forEach(q=>{
-questions.push({q:q[0]+" ("+(i+1)+")",a:[q[1],q[2],q[3],q[4]],correct:q[5]});
-});
-}
-
 // ===== VARIABLES =====
-let current=0,timeLeft=65,timer;
+let current=0, timer, timeLeft=65;
 let respuestas=new Array(questions.length).fill(null);
 let tiempos=new Array(questions.length).fill(0);
-let inicioExamen,inicioPregunta;
+let inicioExamen, inicioPregunta;
 
-// ===== INICIAR =====
+// ===== INICIO =====
 function iniciar(){
 if(!nombre.value||!cuenta.value){alert("Completa los datos");return;}
 inicioExamen=new Date();
@@ -120,43 +156,37 @@ let html=`<h2>Resultados</h2>
 <p><b>Cuenta:</b> ${cuenta.value}</p>
 <p><b>Tiempo total:</b> ${total}s</p>`;
 
-let textoDescarga="";
-
 questions.forEach((q,i)=>{
 let r=respuestas[i];
-let estado="";
-
-if(r===q.correct){
-correctas++;
-estado=`<span class="correcta">✔ Correcta</span>`;
+if(r===q.correct){correctas++;
+html+=`<p class="correcta">${i+1}. ✔ Correcta | Tiempo: ${tiempos[i]}s</p>`;
 }else{
-estado=`<span class="incorrecta">✘ Incorrecta</span>`;
+html+=`<p class="incorrecta">${i+1}. ✘ Incorrecta | Tiempo: ${tiempos[i]}s</p>`;
 }
-
-// TEXTO SIN RESPUESTAS CORRECTAS
-textoDescarga+=`${i+1}. Respuesta: ${r!==null?letras[r]:"Sin responder"} | Tiempo: ${tiempos[i]}s\n`;
-
-html+=`<p><b>${i+1}. ${q.q}</b><br>${estado}<br>Tiempo: ${tiempos[i]}s</p><hr>`;
 });
 
 let cal=(correctas/questions.length*10).toFixed(2);
 
 html+=`<h3>Calificación: ${cal}</h3>
-<button onclick="descargar()">Descargar resultados</button>`;
+<button onclick="descargar()">Descargar</button>`;
 
 resultado.innerHTML=html;
 resultado.style.display="block";
 
-// REPORTE SIN RESPUESTAS CORRECTAS
-window.reporte=`
-Nombre: ${nombre.value}
+// TEXTO SIN RESPUESTAS CORRECTAS
+let texto=`Nombre: ${nombre.value}
 Cuenta: ${cuenta.value}
 Tiempo total: ${total}s
 Calificación: ${cal}
 
 Resultados:
-${textoDescarga}
 `;
+
+questions.forEach((q,i)=>{
+texto+=`${i+1}. ${respuestas[i]!==null?letras[respuestas[i]]:"Sin responder"} | ${tiempos[i]}s\n`;
+});
+
+window.reporte=texto;
 }
 
 // ===== DESCARGAR =====
@@ -164,7 +194,7 @@ function descargar(){
 let blob=new Blob([window.reporte],{type:"text/plain"});
 let a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="resultado_examen.txt";
+a.download="resultado.txt";
 a.click();
 }
 
